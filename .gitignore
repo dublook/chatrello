@@ -1,0 +1,85 @@
+.metadata
+.project
+.classpath
+.checkstyle
+.settings/
+.externalToolBuilders/
+target/
+bin/
+*.db
+*.log
+*.bak
+*.swp
+*~
+*#
+
+closure-library
+Gruntfile.js
+CfwGruntfile.js
+_SpecRunner.html
+jasmine-template.tmpl
+.grunt/
+.jshintrc
+deps.js
+node_modules/
+build/
+.sass-cache
+
+# Following resources are supplied by company-client-build-scripts
+# You should not edit it.
+package.json
+jsdoc-conf.json
+
+/*.bat
+/company-framework-js/src/main/webapp/script/lib/wap/css/core.css
+
+*.iml
+.idea
+﻿# ビルドで利用するもの
+.jshintrc
+CfwGruntfile.js
+Gruntfile.js
+jasmine-template.tmpl
+jsdoc-conf.json
+package.json
+
+# ビルドの成果物
+target/
+node_modules/
+build/
+company-hue-mock-front/src/main/webapp/common/lib/wap/shc/css/shc.css
+company-hue-mock-front/src/main/webapp/common/lib/wap/bt/min-js/slickgrid.js.map
+
+# eclipse-pluginが生成する二次ファイル
+.classpath
+.project
+.checkstyle
+.settings/
+
+# 3rd-party製のライブラリ
+
+# sass-cache
+.sass-cache/
+.idea
+
+# idea
+*.iml
+
+# windows path
+C:/
+
+# Less files
+company-hue-mock-front/Gruntfile.js.*.bak
+
+# merge trashes
+*.orig
+
+# npm stack trace
+npm-debug.log
+
+# Intellij
+*.iml
+.idea
+
+# jrebel
+rebel.xml
