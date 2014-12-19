@@ -1,0 +1,9 @@
+{
+  "name": "chatrello",
+  "version": "0.1",
+  "description": "Integrating chatwork and trello.",
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "manifest_version": 2
+}
