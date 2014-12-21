@@ -1,9 +1,14 @@
 {
-  "name": "chatrello",
-  "version": "0.1",
-  "description": "Integrating chatwork and trello.",
-  "background": {
-    "scripts": ["background.js"]
-  },
-  "manifest_version": 2
+    "name": "chatrello",
+    "version": "0.1",
+    "description": "Integrating chatwork and trello.",
+    "content_scripts": [
+        {
+            "matches": ["https://www.chatwork.com/"],
+            "css": ["menu.css", "menubutton.css", "menuitem.css"],
+            "js": ["content.js"],
+            "run_at": "document_idle"
+        }
+    ],
+    "manifest_version": 2
 }

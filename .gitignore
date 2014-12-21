@@ -14,6 +14,7 @@ bin/
 *#
 
 closure-library
+compiler-latest
 Gruntfile.js
 CfwGruntfile.js
 _SpecRunner.html
