@@ -84,3 +84,6 @@ npm-debug.log
 
 # jrebel
 rebel.xml
+
+# chatrello package
+chatrello-*.zip
