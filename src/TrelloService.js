@@ -91,7 +91,6 @@ com.dublook.chatrello.trello.TrelloService.prototype.createListSelectButton_ = f
  * @private
  */
 com.dublook.chatrello.trello.TrelloService.prototype.init_ = function () {
-  console.log(window.location.href);
   var chatworkCtrl = new com.dublook.chatrello.chatwork.ChatworkCtrl();
   var token = this.getToken_(window.location.href);
   var createListSelectMenu_ = this.createListSelectMenu_;
@@ -101,29 +100,42 @@ com.dublook.chatrello.trello.TrelloService.prototype.init_ = function () {
   chatworkCtrl.waitForContentArea().then(function() {
     var $div = goog.dom.createDom('div', null, '');
     if (token === null) {
-      var $anchor = goog.dom.createDom('a', null, 'auth');
+      var $anchor = goog.dom.createDom('a', null, 'Authorize chatrello with your Trello account.');
       $anchor.href = format('%s/authorize?key=%s&name=chatrello&expiration=never&response_type=token&scope=read,write&callback_method=fragment&return_url=' + window.location.href, API_ROOT, APP_KEY);
       goog.dom.appendChild($div, $anchor);
       chatworkCtrl.showContent($div);
     } else {
       var $container = new goog.ui.Container();
       var $cardTitleInput = new goog.ui.LabelInput();
+      var titleLabel = goog.dom.createDom('label', null, 'Card Title');
+      $container.addChild(new goog.ui.Control(titleLabel), true);
       var inputContr = new goog.ui.Control();
       inputContr.addChild($cardTitleInput, true);
       $container.addChild(inputContr, true);
+      var descLabel = goog.dom.createDom('label', null, 'Description');
+      $container.addChild(new goog.ui.Control(descLabel), true);
       var textarea = new goog.ui.Textarea('');
       $container.addChild(textarea, true);
       var $menu = createListSelectMenu_();
-      var $button = createListSelectButton_($menu);
+      var $listSelectButton = createListSelectButton_($menu);
       var xhr = goog.labs.net.xhr;
-      var $sendButton = new goog.ui.Button('New Card');
+      var $sendButton = new goog.ui.Button('Save new card');
       $sendButton.setEnabled(false);
       $sendButton.listen('action', function(event) {
-        var listId = $button.getValue();
+        var listId = $listSelectButton.getValue();
+        var labelStatus = goog.dom.getElement('label-status');
+        goog.dom.removeChildren(labelStatus);
+        // validations
         if (!listId) {
-          alert('Select a list to create new card to');
+          goog.dom.appendChild(labelStatus, goog.dom.createTextNode('Select a list to create new card to'));
           return;
         }
+        if (!$cardTitleInput.getValue()) {
+          goog.dom.appendChild(labelStatus, goog.dom.createTextNode('Card title cannot be empty.'));
+          return;
+        }
+        // start saving
+        goog.dom.appendChild(labelStatus, goog.dom.createTextNode('Saving...'));
         $sendButton.setEnabled(false);
         var list = com.dublook.chatrello.trello.model.List.get(listId);
         var createCardUrl = format('%s/cards?key=%s&token=%s&idList=%s&name=%s&desc=%s',
@@ -133,21 +145,31 @@ com.dublook.chatrello.trello.TrelloService.prototype.init_ = function () {
         xhr.postJson(createCardUrl).then(function(newCard) {
           console.log(newCard);
           $sendButton.setEnabled(true);
+          $cardTitleInput.setValue('');
+          textarea.setValue('');
+          var labelStatus = goog.dom.getElement('label-status');
+          goog.dom.removeChildren(labelStatus);
+          goog.dom.appendChild(labelStatus, goog.dom.createDom('a',
+              {href: newCard.shortUrl, target: 'new_card', title: newCard.name},
+              'New card saved! Click to show in Trello.com'));
         }).thenCatch(function(error) {
-          alert('Failed to add new card.');
           console.error(error);
           $sendButton.setEnabled(true);
+          var labelStatus = goog.dom.getElement('label-status');
+          goog.dom.removeChildren(labelStatus);
+          goog.dom.appendChild(labelStatus, goog.dom.createTextNode('Failed to add new card.'));
+          $sendButton.setEnabled(false);
         });
       });
       document.onmouseup = function(event) {
         var cardDraft = chatworkCtrl.getCardDraft(window.getSelection());
-        if (cardDraft) {
+        if (cardDraft && cardDraft.title) {
           $cardTitleInput.setValue(cardDraft.title);
           textarea.setValue(cardDraft.description);
           $sendButton.setEnabled(true);
         }
       };
-      $container.addChild($button, true);
+      $container.addChild($listSelectButton, true);
       chatworkCtrl.decorateContent($container);
       var boardUrl = format('%s/members/my/boards?key=%s&token=%s&fields=name',
           API_ROOT, APP_KEY, token);
@@ -165,8 +187,8 @@ com.dublook.chatrello.trello.TrelloService.prototype.init_ = function () {
               listMenu.setValue(list.id);
               boardMenu.addItem(listMenu);
               listMenu.listen('action', function(event) {
-                $button.setValue(list.id);
-                $button.setContent(list.boardName + ' > ' + list.name);
+                $listSelectButton.setValue(list.id);
+                $listSelectButton.setContent(list.boardName + ' > ' + list.name);
                 $sendButton.setEnabled(true);
               });
             });
@@ -175,6 +197,8 @@ com.dublook.chatrello.trello.TrelloService.prototype.init_ = function () {
         });
       });
       $container.addChild($sendButton, true);
+      var statusLabel = goog.dom.createDom('label', {id: 'label-status'}, '');
+      $container.addChild(new goog.ui.Control(statusLabel), true);
     }
   });
 };

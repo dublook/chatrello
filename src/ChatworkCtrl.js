@@ -113,10 +113,14 @@ com.dublook.chatrello.chatwork.ChatworkCtrl.prototype.findMessageNodes_ = functi
 /**
  * @private
  * @param {Array.<Node>} messageNodes
+ * @param {Selection} selection
  * @return {string}
  */
-com.dublook.chatrello.chatwork.ChatworkCtrl.prototype.parseCardTitle_ = function(messageNodes) {
-  var messages = goog.array.map(messageNodes, function(messageNode) {
+com.dublook.chatrello.chatwork.ChatworkCtrl.prototype.parseCardTitle_ = function (messageNodes, selection) {
+  if (messageNodes.length === 1) {
+    return selection.toString();
+  }
+  var messages = goog.array.map(messageNodes, function (messageNode) {
     return messageNode.querySelector('.chatTimeLineMessageArea > pre').innerText;
   });
   return messages.join(' ');
@@ -141,7 +145,7 @@ com.dublook.chatrello.chatwork.ChatworkCtrl.prototype.getCardDraft = function(se
   if (messageNodes.length === 0) {
     return null;
   }
-  var title = this.parseCardTitle_(messageNodes);
+  var title = this.parseCardTitle_(messageNodes, selection);
   var messageId = this.getMessageId_(messageNodes[0]);
   return {
     title: title,
